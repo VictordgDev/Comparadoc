@@ -3,6 +3,15 @@ import { generateCompletion } from '@/lib/ai/client'
 
 export async function POST(request) {
   try {
+    // Verificar se a API key está configurada
+    if (!process.env.DEEPSEEK_API_KEY) {
+      console.error('DEEPSEEK_API_KEY não está configurada')
+      return NextResponse.json(
+        { error: 'Configuração de IA não encontrada. Configure DEEPSEEK_API_KEY.' },
+        { status: 500 }
+      )
+    }
+
     const { messages } = await request.json()
 
     if (!messages || !Array.isArray(messages)) {
@@ -45,7 +54,7 @@ Sempre responda em português do Brasil de forma clara e objetiva.`,
   } catch (error) {
     console.error('Erro no chat:', error)
     return NextResponse.json(
-      { error: 'Erro ao processar mensagem' },
+      { error: 'Erro ao processar mensagem: ' + error.message },
       { status: 500 }
     )
   }
